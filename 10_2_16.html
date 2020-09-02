@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<title>10進 2進 16進</title>
+	<script type="text/javascript"><!--
+
+var gap = 300;
+var delay = 100;
+var timer = null;
+window.onload = function(){
+	new Counter(10, 3, "s10");
+	new Counter( 2, 6, "s2");
+	new Counter(16, 2, "s16");
+	document.getElementById("add_button").focus();
+}
+
+function Counter(base, digits, id){
+	this.base    = base;
+	this.digits  = digits;
+	this.html_id = id;
+	this.values = [];
+	this.times  = [];
+	var parent = document.getElementById(id);
+	for(var i=0; i<this.digits; i++){
+		this.values[i] = 0;
+		this.times[i]  = null;
+		var elm = document.createElement("div");
+		elm.id = id + "_" + i;
+		elm.className = "digit";
+		elm.innerHTML = "0";
+		parent.appendChild(elm);
+	}
+	Counter.counters.push(this);
+}
+Counter.counters = [];
+Counter.prototype.add = function(time){
+	for(var i=0; i<this.digits; i++){
+		if (++this.values[i] >= this.base) this.values[i] = 0;
+		document.getElementById(this.html_id + "_" + i).innerHTML =
+			this.values[i].toString(16).toUpperCase();
+		this.times[i] = time + i*delay;
+		if (this.values[i] != 0) break;
+	}
+}
+Counter.prototype.draw = function(time){
+	var flag = false;
+	for(var i=0; i<this.digits; i++){
+		if (! this.times[i]) continue;
+		flag = true;
+		var g = time - this.times[i];
+		if (g < 0) continue;
+		if (g > gap) g = gap;
+		var y = (this.values[i] == 0 ? this.base : this.values[i])*160 -
+			80 - Math.cos(3.14*g/gap)*80;
+		if (g == gap){
+			y = (this.values[i] == 0 ? this.base : this.values[i])*160;
+			this.times[i] = null;
+		}
+		document.getElementById(this.html_id + "_" + i).style.backgroundPosition =
+			"0px -" + y +"px";
+	}
+	return flag;
+}
+
+function add(){
+	var time = (new Date()).getTime();
+	for(var i=0; i<Counter.counters.length; i++){
+		Counter.counters[i].add(time)
+	}
+	draw();
+}
+
+function draw(){
+	var time = (new Date()).getTime();
+	var flag = false;
+	for(var i=0; i<Counter.counters.length; i++){
+		if (Counter.counters[i].draw(time)) flag = true;
+	}
+	if (flag) timer = window.setTimeout(draw, 10);
+}
+
+	--></script>
+	<style type="text/css" media="all"><!--
+table{
+	margin-top: 2em;
+	width: 1200px;
+	text-align: center;
+}
+td{
+	text-align: right;
+}
+td p{
+	font-size: 4em;
+	font-weight: bold;
+	margin-bottom: 0;
+}
+form{
+	margin-top: 8em;
+	text-align: center;
+}
+.digit{
+	margin: 0 2px 0 0;
+	padding: 0;
+	width: 100px;
+	height: 160px;
+	background-color: black;
+	color: white;
+	text-align: center;
+	font-size: 140px;
+	float: right;
+	background-position: 0px 0px;
+	text-indent: -9999px;
+}
+
+td#s10{
+	width: 320px;
+}
+#s10 .digit{
+	background-image: url(10.png);
+}
+td#s2{
+	width: 620px;
+}
+#s2 .digit{
+	background-image: url(2.png);
+}
+td#s16{
+	width: 220px;
+}
+#s16 .digit{
+	background-image: url(16.png);
+}
+	--></style>
+</head>
+<body>
+<table><tbody><tr>
+<td id="s10">
+	<p>10進</p>
+</td>
+<td id="s2">
+	<p>2進</p>
+</td>
+<td id="s16">
+	<p>16進</p>
+</td>
+</tr></tbody></table>
+<form action="./" method="get"><p>
+	<input type="button" value="増加" onclick="add();" id="add_button">
+</p></form>
+</body>
+</html>
