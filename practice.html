@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
+    <script>
+let answer = undefined;
+
+window.onload = start;
+
+function start()
+{
+	document.getElementById("question").innerHTML = "";
+	new_question();
+}
+
+function new_question()
+{
+	let types = [];
+	let question = undefined;
+	let num = undefined;
+	let q = undefined;
+	["2_10", "10_2", "2_16", "16_2", "16_10", "10_16"].forEach(elm => {
+		if (document.getElementById(elm).checked) types.push(elm);
+	})
+	if (types.length == 0) types = ["2_10", "10_2", "2_16", "16_2", "16_10", "10_16"];
+	let type = types[Math.floor(Math.random() * types.length)];
+	switch (type) {
+		case "2_10":
+			num = Math.floor(Math.random() * 256);
+			q = num.toString(2);
+			answer = num.toString(10);
+			question = `${q}<sub>(2)</sub> を 10進法にすると？`;
+			break;
+			case "10_2":
+			num = Math.floor(Math.random() * 256);
+			q = num.toString(10);
+			answer = num.toString(2);
+			question = `${q}<sub>(10)</sub> を 2進法にすると？`;
+			break;
+		case "2_16":
+			num = Math.floor(Math.random() * 128 + 128);
+			q = num.toString(2);
+			answer = num.toString(16).toUpperCase();
+			question = `${q}<sub>(2)</sub> を 16進法にすると？`;
+			break;
+		case "16_2":
+			num = Math.floor(Math.random() * 240 + 16);
+			q = num.toString(16).toUpperCase();
+			answer = num.toString(2);
+			question = `${q}<sub>(16)</sub> を 2進法にすると？`;
+			break;
+		case "16_10":
+			num = Math.floor(Math.random() * 240 + 16);
+			q = num.toString(16).toUpperCase();
+			answer = num.toString(10);
+			question = `${q}<sub>(16)</sub> を 10進法にすると？`;
+			break;
+		case "10_16":
+			num = Math.floor(Math.random() * 128 + 128);
+			q = num.toString(10);
+			answer = num.toString(16).toUpperCase();
+			question = `${q}<sub>(10)</sub> を 16進法にすると？`;
+			break;
+	}
+	let p = document.createElement("p");
+	p.innerHTML = question;
+	document.getElementById("question").appendChild(p);
+	document.getElementById("answer").value = "";
+	document.getElementById("answer").focus();
+}
+
+function solve()
+{
+	let ans = document.getElementById("answer").value.trim().toUpperCase().replace(/^0+/, "");
+	if (ans == answer)
+	{
+		document.getElementById("question").lastChild.innerHTML += " " + answer + "⭕";
+	} else {
+		document.getElementById("question").lastChild.innerHTML += " " + ans + "❌ …正解は " + answer;
+	}
+	new_question();
+}
+    </script>
+	<style>
+select,
+input,
+button {
+	font-size: 2em;
+}
+	</style>
+    <title>2進・10進・16進間の変換</title>
+  </head>
+
+  <body>
+	<form onsubmit="return false;">
+		<input type="checkbox" id="2_10" checked><label for="2_10">2進→10進</label>　
+		<input type="checkbox" id="10_2" checked><label for="10_2">10進→2進</label>　
+		<input type="checkbox" id="2_16" checked><label for="2_16">2進→16進</label>　
+		<input type="checkbox" id="16_2" checked><label for="16_2">16進→2進</label>　
+		<input type="checkbox" id="16_10"><label for="16_10">16進→10進</label>　
+		<input type="checkbox" id="10_16"><label for="10_16">10進→16進</label>　
+	</form>
+    <hr />
+	<div id="question">
+	</div>
+	<form onsubmit="return false;">
+		<input id="answer" type="text">
+		<button id="solve" onclick="window.solve();">解答</button>
+		<p>※ 16進法の入力は、大文字小文字どちらでも OK</p>
+	</form>
+  </body>
+</html>
