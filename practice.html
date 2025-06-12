@@ -72,7 +72,7 @@ function new_question()
 
 function solve()
 {
-	let ans = document.getElementById("answer").value.trim().toUpperCase().replace(/^0+/, "");
+	let ans = document.getElementById("answer").value.trim().toUpperCase().replace(/^0+(.+)$/, "$1");
 	if (ans == answer)
 	{
 		document.getElementById("question").lastChild.innerHTML += " " + answer + "⭕";
